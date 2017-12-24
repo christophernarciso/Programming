@@ -19,17 +19,15 @@ import java.awt.*;
 @ScriptManifest(authors = "AliveInMe", name = "CMetalDragons", category = "Combat")
 public class Main extends Script implements Starting, Painting, Ending, MessageListening07{
 
-    private ABCUtil abc;
-
     @Override
     public void onStart() {
         //Start AntibanCompliance instance
         General.useAntiBanCompliance(true);
-        abc = new ABCUtil();
+        Variables.get().abc = new ABCUtil();
         //Drink when the script first starts inside the dragon room.
         Variables.get().shouldDrinkAntifire = true;
         //Generate our eatAt from the abc instance
-        Variables.get().eatAt = abc.generateEatAtHP();
+        Variables.get().eatAt = Variables.get().abc.generateEatAtHP();
         //Set to use ranged potions if the inventory contains them
         Variables.get().shouldDrinkRangingPotion = Inventory.find(Constants.Filters.ITEM.POTION_RANGING).length > 0;
     }
@@ -38,9 +36,11 @@ public class Main extends Script implements Starting, Painting, Ending, MessageL
     public void run() {
         while (true) {
             if (Constants.METAL_DRAGONS_ROOM.contains(Player.getPosition())){
+                /* checks if it should leave the area due to certain conditions */
+                if (Variables.get().shouldLeave)
+                    leave();
                 /* Check item consumables food & potions*/
                 consumables();
-
                 if (!isAttacking()){
                     /* checks for loot if shouldLoot */
                     loot();
@@ -68,7 +68,7 @@ public class Main extends Script implements Starting, Painting, Ending, MessageL
     @Override
     public void onEnd() {
         //Close the abcl instance.
-        abc.close();
+        Variables.get().abc.close();
     }
 
     @Override
@@ -97,6 +97,8 @@ public class Main extends Script implements Starting, Painting, Ending, MessageL
             Variables.get().shouldDrinkAntifire = true;
         else if (s.contains("You drink some of your antifire") || s.equals("You drink some of your extended antifire potion."))
             Variables.get().shouldDrinkAntifire = false;
+        else if (s.contains("There is no ammo left in your quiver.") || s.contains("You can’t use that ammo with your crossbow."))
+            Variables.get().shouldLeave = true;
     }
 
     @Override
@@ -157,29 +159,29 @@ public class Main extends Script implements Starting, Painting, Ending, MessageL
      * Tribot Antiban Compliance Methods
      */
     private void antibanCompliance(){
-        if (this.abc.shouldCheckTabs())
-            this.abc.checkTabs();
+        if (Variables.get().abc.shouldCheckTabs())
+            Variables.get().abc.checkTabs();
 
-        if (this.abc.shouldCheckXP())
-            this.abc.checkXP();
+        if (Variables.get().abc.shouldCheckXP())
+            Variables.get().abc.checkXP();
 
-        if (this.abc.shouldExamineEntity())
-            this.abc.examineEntity();
+        if (Variables.get().abc.shouldExamineEntity())
+            Variables.get().abc.examineEntity();
 
-        if (this.abc.shouldMoveMouse())
-            this.abc.moveMouse();
+        if (Variables.get().abc.shouldMoveMouse())
+            Variables.get().abc.moveMouse();
 
-        if (this.abc.shouldPickupMouse())
-            this.abc.pickupMouse();
+        if (Variables.get().abc.shouldPickupMouse())
+            Variables.get().abc.pickupMouse();
 
-        if (this.abc.shouldRightClick())
-            this.abc.rightClick();
+        if (Variables.get().abc.shouldRightClick())
+            Variables.get().abc.rightClick();
 
-        if (this.abc.shouldRotateCamera())
-            this.abc.rotateCamera();
+        if (Variables.get().abc.shouldRotateCamera())
+            Variables.get().abc.rotateCamera();
 
-        if (this.abc.shouldLeaveGame())
-            this.abc.leaveGame();
+        if (Variables.get().abc.shouldLeaveGame())
+            Variables.get().abc.leaveGame();
     }
 
     /**
@@ -301,6 +303,15 @@ public class Main extends Script implements Starting, Painting, Ending, MessageL
                     && tile.distanceTo(Player.getRSPlayer().getPosition()) < 9){
                 if (Walking.walkTo(tile))
                     break;
+            }
+        }
+    }
+
+    private void leave(){
+        RSItem[] teleport = Inventory.find(Constants.Filters.ITEM.TELEPORT_ITEM);
+        if (teleport.length > 0){
+            if (teleport[0].click("Break")){
+                Timing.waitCondition(Constants.Conditions.HAS_LEFT, 3000);
             }
         }
     }

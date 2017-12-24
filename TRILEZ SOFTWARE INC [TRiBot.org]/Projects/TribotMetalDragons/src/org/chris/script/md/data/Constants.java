@@ -13,8 +13,18 @@ public final class Constants {
     public static final double SCRIPT_VERSION = 1.0;
     public static final String SCRIPT_AUTHOR = "AIM";
 
-    public static final String[] LOOTABLES = {};
-    public static final String[] ALCHABLES = {};
+    public static final String[] LOOTABLES = {"Runite limbs", "Runite bar", "Rune battleaxe", "Rune med helm", "Rune full helm", "Rune axe", "Rune mace"
+            , "Adamantite bar", "Adamant platebody", "Rune spear" , "Rune 2h sword", "Rune sq shield", "Rune kiteshield", "Adamant 2h sword", "Adamant sq shield"
+            , "Adamant axe", "Adamant battleaxe","Loop half of key", "Tooth half of key", "Runite bar", "Rune spear",
+            "Rune battleaxe", "Rune 2h sword", "Uncut diamond", "Silver ore", "Rune sq shield",
+            "Death rune", "Rune kiteshield", "Dragon med helm", "Shield left half", "Runite bolts", "Rune javelin",
+            "Dragon spear", "Ensouled dragon head", "Death rune", "Rune longsword", "Draconic visage",
+            "Blood rune", "Soul rune", "Dragon platelegs", "Dragon plateskirt", "Rune dart(p)", "Rune knife"
+            , "Looting bag", "Dragon javelin heads", "Uncut dragonstone", "Dragonstone", "Dragon full helm", "Runite ore"};
+
+    public static final String[] ALCHABLES = {"Runite limbs", "Runite bar", "Rune battleaxe", "Rune med helm", "Rune full helm", "Rune axe", "Rune mace"
+            , "Adamantite bar", "Adamant platebody", "Rune spear" , "Rune 2h sword", "Rune sq shield", "Rune kiteshield", "Adamant 2h sword", "Adamant sq shield"
+            , "Adamant axe", "Adamant battleaxe"};
 
     public static final RSArea METAL_DRAGONS_ROOM = new RSArea(
             new RSTile(2690, 9466),
@@ -47,6 +57,12 @@ public final class Constants {
             @Override
             public boolean active() {
                 return Magic.isSpellSelected();
+            }
+        };
+        public static final Condition HAS_LEFT = new Condition() {
+            @Override
+            public boolean active() {
+                return !Constants.METAL_DRAGONS_ROOM.contains(Player.getPosition());
             }
         };
     }
@@ -95,6 +111,13 @@ public final class Constants {
                 public boolean accept(RSItem rsItem) {
                     return rsItem.getDefinition() != null && rsItem.isClickable() && rsItem.getDefinition().getActions().length > 0
                             && Arrays.stream(Constants.ALCHABLES).anyMatch(i -> i.contains(rsItem.getDefinition().getName()));
+                }
+            };
+            public static final Filter<RSItem> TELEPORT_ITEM = new Filter<RSItem>() {
+                @Override
+                public boolean accept(RSItem rsItem) {
+                    return rsItem.getDefinition() != null && rsItem.isClickable() && rsItem.getDefinition().getActions().length > 0
+                            && Arrays.asList(rsItem.getDefinition().getActions()).contains("Break");
                 }
             };
         }

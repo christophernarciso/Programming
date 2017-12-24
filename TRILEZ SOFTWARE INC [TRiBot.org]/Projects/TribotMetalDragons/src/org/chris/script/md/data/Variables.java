@@ -1,5 +1,7 @@
 package org.chris.script.md.data;
 
+import org.tribot.api.util.abc.ABCUtil;
+
 public class Variables {
 
     /**
@@ -11,7 +13,9 @@ public class Variables {
 
     public int eatAt;
 
-    public boolean shouldDrinkAntifire, shouldDrinkRangingPotion, shouldLoot;
+    public ABCUtil abc;
+
+    public boolean shouldDrinkAntifire, shouldDrinkRangingPotion, shouldLoot, shouldLeave;
 
     public static Variables get(){
         return instance;
