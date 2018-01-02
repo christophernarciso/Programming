@@ -16,7 +16,7 @@ import org.tribot.script.interfaces.*;
 
 import java.awt.*;
 
-@ScriptManifest(authors = "AliveInMe", name = "CMetalDragons", category = "Combat")
+@ScriptManifest(authors = "AliveInMe", name = "AIMMetalDragons", category = "Combat")
 public class Main extends Script implements Starting, Painting, Ending, MessageListening07{
 
     @Override
