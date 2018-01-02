@@ -30,6 +30,7 @@ public class Main extends Script implements Starting, Painting, Ending, MessageL
         Variables.get().eatAt = Variables.get().abc.generateEatAtHP();
         //Set to use ranged potions if the inventory contains them
         Variables.get().shouldDrinkRangingPotion = Inventory.find(Constants.Filters.ITEM.POTION_RANGING).length > 0;
+        Variables.get().shouldDrinkMagicPotion = Inventory.find(Constants.Filters.ITEM.POTION_MAGIC).length > 0;
     }
     
     @Override
@@ -56,7 +57,7 @@ public class Main extends Script implements Starting, Painting, Ending, MessageL
                 General.println("Please start in the metal dragons room!");
                 break;
             }
-            General.sleep(1000);
+            General.sleep(Variables.get().abc.generateReactionTime());
         }
     }
 
@@ -99,6 +100,10 @@ public class Main extends Script implements Starting, Painting, Ending, MessageL
             Variables.get().shouldDrinkAntifire = false;
         else if (s.contains("There is no ammo left in your quiver.") || s.contains("You can’t use that ammo with your crossbow."))
             Variables.get().shouldLeave = true;
+        else if (s.equals("You do not have enough Chaos Runes to cast this spell.") || s.equals("You do not have enough Blood Runes to cast this spell.")
+                || s.equals("You do not have enough Death Runes to cast this spell.") || s.equals("You do not have enough Air Runes to cast this spell.")){
+            Variables.get().shouldLeave = true;
+        }
     }
 
     @Override
@@ -188,15 +193,15 @@ public class Main extends Script implements Starting, Painting, Ending, MessageL
      * Checks for valid alchable
      * Grab a valid NPC interactable & interact with it
      */
-    //TODO: ADD SPELL NAME
     private void attack(){
         RSItem[] alchable = Inventory.find(Constants.Filters.ITEM.ALCHABLE_ITEM);
-        if (alchable.length > 0 && Inventory.getCount("Fire rune", "Nature rune") > 5){
+        if (alchable.length > 0 && Inventory.getCount("Nature rune") > 1
+                && (Inventory.getCount("Fire rune") > 5 || Equipment.isEquipped(Constants.Filters.ITEM.STAFF_ITEM))){
             if (Magic.isSpellSelected()){
                 if (alchable[0].click("Cast"))
                     Timing.waitCondition(Constants.Conditions.ANIMATING, 2000);
             } else {
-                if (Magic.selectSpell(""))
+                if (Magic.selectSpell("High Level Alchemy"))
                     Timing.waitCondition(Constants.Conditions.SPELL_SELECTED, 4000);
             }
         } else {
@@ -283,14 +288,31 @@ public class Main extends Script implements Starting, Painting, Ending, MessageL
                     Timing.waitCondition(Constants.Conditions.ANIMATING, 2000);
                     Variables.get().shouldDrinkAntifire = false;
                 }
-            } else General.println("No antifire found.");
-        } else if (Variables.get().shouldDrinkRangingPotion && Skills.getActualLevel(Skills.SKILLS.RANGED) == Skills.getCurrentLevel(Skills.SKILLS.RANGED)){
+            } else {
+                General.println("No antifire potion found.");
+                Variables.get().shouldLeave = true;
+            }
+        } else if (Variables.get().shouldDrinkRangingPotion && Skills.getActualLevel(Skills.SKILLS.RANGED) <=
+                Skills.getCurrentLevel(Skills.SKILLS.RANGED) + (1 + (.10 * Skills.getActualLevel(Skills.SKILLS.RANGED)))){
             RSItem[] potion = Inventory.find(Constants.Filters.ITEM.POTION_RANGING);
             if (potion.length > 0){
                 if (potion[0].click("Drink")){
                     Timing.waitCondition(Constants.Conditions.ANIMATING, 2000);
                 }
-            } else General.println("No antifire found.");
+            } else {
+                General.println("No ranging potion found.");
+                Variables.get().shouldDrinkRangingPotion = false;
+            }
+        } else if (Variables.get().shouldDrinkMagicPotion && Skills.getActualLevel(Skills.SKILLS.MAGIC) <= Skills.getCurrentLevel(Skills.SKILLS.MAGIC) + 2){
+            RSItem[] potion = Inventory.find(Constants.Filters.ITEM.POTION_MAGIC);
+            if (potion.length > 0){
+                if (potion[0].click("Drink")){
+                    Timing.waitCondition(Constants.Conditions.ANIMATING, 2000);
+                }
+            } else {
+                General.println("No magic potion found.");
+                Variables.get().shouldDrinkMagicPotion = false;
+            }
         }
     }
 

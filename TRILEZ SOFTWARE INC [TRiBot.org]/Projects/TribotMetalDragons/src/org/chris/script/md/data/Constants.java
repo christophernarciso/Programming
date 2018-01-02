@@ -106,6 +106,13 @@ public final class Constants {
                             rsItem.getDefinition().getActions().length > 0 && Arrays.asList(rsItem.getDefinition().getActions()).contains("Drink");
                 }
             };
+            public static final Filter<RSItem> POTION_MAGIC = new Filter<RSItem>() {
+                @Override
+                public boolean accept(RSItem rsItem) {
+                    return rsItem.getDefinition() != null && rsItem.isClickable() && rsItem.getDefinition().getName().contains("Magic potion") &&
+                            rsItem.getDefinition().getActions().length > 0 && Arrays.asList(rsItem.getDefinition().getActions()).contains("Drink");
+                }
+            };
             public static final Filter<RSItem> ALCHABLE_ITEM = new Filter<RSItem>() {
                 @Override
                 public boolean accept(RSItem rsItem) {
@@ -118,6 +125,13 @@ public final class Constants {
                 public boolean accept(RSItem rsItem) {
                     return rsItem.getDefinition() != null && rsItem.isClickable() && rsItem.getDefinition().getActions().length > 0
                             && Arrays.asList(rsItem.getDefinition().getActions()).contains("Break");
+                }
+            };
+            public static final Filter<RSItem> STAFF_ITEM = new Filter<RSItem>() {
+                @Override
+                public boolean accept(RSItem rsItem) {
+                    return rsItem.getDefinition() != null && rsItem.isClickable() &&
+                            (rsItem.getDefinition().getName().contains("Smoke") || rsItem.getDefinition().getName().equals("Staff of fire"));
                 }
             };
         }

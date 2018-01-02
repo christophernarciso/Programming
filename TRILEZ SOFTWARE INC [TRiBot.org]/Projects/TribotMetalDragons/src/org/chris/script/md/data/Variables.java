@@ -15,7 +15,7 @@ public class Variables {
 
     public ABCUtil abc;
 
-    public boolean shouldDrinkAntifire, shouldDrinkRangingPotion, shouldLoot, shouldLeave;
+    public boolean shouldDrinkAntifire, shouldDrinkRangingPotion, shouldDrinkMagicPotion, shouldLoot, shouldLeave;
 
     public static Variables get(){
         return instance;
