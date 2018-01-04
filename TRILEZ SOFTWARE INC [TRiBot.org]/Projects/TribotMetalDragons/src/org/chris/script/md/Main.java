@@ -70,6 +70,7 @@ public class Main extends Script implements Starting, Painting, Ending, MessageL
     public void onEnd() {
         //Close the abcl instance.
         Variables.get().abc.close();
+        Variables.get().abc = null;
     }
 
     @Override

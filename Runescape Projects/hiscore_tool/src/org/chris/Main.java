@@ -6,7 +6,7 @@ package org.chris;
 public class Main {
 
     public static void main(String[] args) {
-        GUI gui = new GUI();
+        HiScoreGUI gui = new HiScoreGUI();
         gui.setVisible(true);
     }
 
