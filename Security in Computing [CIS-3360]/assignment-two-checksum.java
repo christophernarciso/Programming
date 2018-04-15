@@ -13,7 +13,7 @@ import java.util.Arrays;
 public class checksum {
 
     public static void main(String[] args) {
-        int checkSumSize, characterCount, checkSumResult;
+        int checkSumSize = 0, characterCount = 0, checkSumResult = 0;
         String input = null;
         byte[] fileBytes;
 
@@ -39,30 +39,26 @@ public class checksum {
                     fileBytes = getAdjustedByteArray(input, checkSumSize);
                     characterCount = fileBytes.length;
                     checkSumResult = checksum8(fileBytes);
-                    System.out.println("\n" + formattedStringOutput(getAdjustedString(input, checkSumSize)) +
-                            "\n" + checkSumSize + " bit checksum is " + Integer.toHexString(checkSumResult) + " for all " + characterCount + " chars\n");
                     break;
                 case 16:
                     checkSumSize = 16;
                     fileBytes = getAdjustedByteArray(input, checkSumSize);
                     characterCount = fileBytes.length;
                     checkSumResult = checksum16(fileBytes);
-                    System.out.println("\n" + formattedStringOutput(getAdjustedString(input, checkSumSize)) +
-                            "\n" + checkSumSize + " bit checksum is " + Integer.toHexString(checkSumResult) + " for all " + characterCount + " chars\n");
                     break;
                 case 32:
                     checkSumSize = 32;
                     fileBytes = getAdjustedByteArray(input, checkSumSize);
                     characterCount = fileBytes.length;
                     checkSumResult = checksum32(fileBytes);
-                    System.out.println("\n" + formattedStringOutput(getAdjustedString(input, checkSumSize)) +
-                            "\n" + checkSumSize + " bit checksum is " + Integer.toHexString(checkSumResult) + " for all " + characterCount + " chars\n");
                     break;
                 default:
                     System.err.print("Valid checksum sizes are 8, 16, or 32\n");
                     System.exit(1);
                     break;
             }
+            System.out.printf("\n%s\n%2d bit checksum is %8x for all %4d chars\n",
+                    formattedStringOutput(getAdjustedString(input, checkSumSize)), checkSumSize, checkSumResult, characterCount);
         }
     }
 
@@ -90,9 +86,8 @@ public class checksum {
     private static int checksum16(byte[] data) {
         int check = 0;
 
-        for (int i = 0; i <= data.length - 2; i += 2) {
+        for (int i = 0; i <= data.length - 2; i += 2)
             check += ((data[i] << 8) | (data[i + 1] & 0xFF));
-        }
 
         return check & 0xFFFF;
     }
@@ -106,9 +101,8 @@ public class checksum {
     private static int checksum32(byte[] data) {
         int check = 0;
 
-        for (int i = 0; i < data.length; i += 4) {
+        for (int i = 0; i < data.length; i += 4)
             check += ((data[i] << 24) | (data[i + 1] << 16) | (data[i + 2] << 8) | (data[i + 3])) & 0xffffffffL;
-        }
 
         return check;
     }
